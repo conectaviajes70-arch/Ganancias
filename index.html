@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro y Gestión de Ganancias</title>
+  <style>
+    :root {
+      --primary: #00f0ff;
+      --primary-dark: #00b8c9;
+      --success: #00ff9d;
+      --warning: #ffcc00;
+      --danger: #ff3b5c;
+      --bg: #0f0f12;
+      --card: #1a1a22;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a22, #2a2a35);
+      padding: 1.5rem;
+      text-align: center;
+      border-bottom: 3px solid var(--primary);
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.1);
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: none;
+      background: #25252e;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+
+    input:focus {
+      outline: 2px solid var(--primary);
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .row > div {
+      flex: 1;
+    }
+
+    button {
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #00b8c9);
+      color: black;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #00ff9d, #00cc7a);
+      color: black;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #cc0033);
+    }
+
+    .btn-secondary {
+      background: #33333d;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary), #00aaff);
+      color: black;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.4);
+      z-index: 1000;
+      cursor: pointer;
+    }
+
+    .fab-menu {
+      position: fixed;
+      bottom: 100px;
+      right: 24px;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 12px 0;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      display: none;
+      flex-direction: column;
+      z-index: 999;
+      min-width: 220px;
+    }
+
+    .fab-menu button {
+      text-align: left;
+      padding: 14px 20px;
+      background: transparent;
+      margin: 0;
+      border-radius: 0;
+    }
+
+    .fab-menu button:hover {
+      background: #2a2a35;
+    }
+
+    .semaphore {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .red { background: var(--danger); }
+    .yellow { background: var(--warning); }
+    .green { background: var(--success); }
+
+    .record {
+      background: #25252e;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .no-records {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Registro y Gestión de Ganancias</h1>
+  </header>
+
+  <div class="container">
+
+    <!-- === CONFIGURACIÓN DEL VEHÍCULO === -->
+    <div class="card">
+      <h2 class="section-title">Configuración del Vehículo</h2>
+      <p style="font-size:0.9rem; color:#aaa; margin-bottom:1rem;">Los datos se guardan en tu navegador</p>
+
+      <label>Tipo de Vehículo</label>
+      <select id="vehicleType">
+        <option value="gas">Gasolina</option>
+        <option value="electric">Eléctrico</option>
+      </select>
+
+      <div class="row">
+        <div>
+          <label id="efficiencyLabel">Rendimiento (km/l)</label>
+          <input type="number" id="efficiency" value="15" step="0.1">
+        </div>
+        <div>
+          <label id="fuelPriceLabel">Precio Combustible ($/l)</label>
+          <input type="number" id="fuelPrice" value="25" step="0.01">
+        </div>
+      </div>
+
+      <label>Mantenimiento ($/km)</label>
+      <input type="number" id="maintenance" value="1" step="0.01">
+
+      <label>Depreciación del Vehículo ($/km)</label>
+      <input type="number" id="depreciation" value="1" step="0.01">
+
+      <button class="btn-primary" onclick="saveConfig()">Guardar Configuración</button>
+      <p style="font-size:0.85rem; text-align:center; margin-top:8px; color:#00f0ff;">✅ Configuración guardada</p>
+    </div>
+
+    <!-- === REGISTRO DEL DÍA === -->
+    <div class="card">
+      <h2 class="section-title">Registro del Día</h2>
+      <p style="font-size:0.9rem; color:#aaa;">Umbrales mínimos: <strong>$10/km</strong> y <strong>$200/hora</strong></p>
+
+      <div class="row">
+        <div>
+          <label>Kilómetros recorridos hoy (km)</label>
+          <input type="number" id="km" placeholder="Ej. 170" value="170">
+        </div>
+        <div>
+          <label>Tiempo (horas)</label>
+          <input type="number" id="hours" placeholder="Ej. 11" value="11" step="0.5">
+        </div>
+      </div>
+
+      <label>Tarifa total del día ($)</label>
+      <input type="number" id="revenue" placeholder="Ej. 1700" value="1700">
+
+      <div class="row" style="margin-top:16px;">
+        <button class="btn-primary" onclick="calculateDay()">Calcular</button>
+        <button class="btn-secondary" onclick="clearDayForm()">Limpiar</button>
+      </div>
+
+      <div id="dayResult" style="margin-top:1rem; padding:12px; border-radius:12px; background:#1f1f28; display:none;"></div>
+    </div>
+
+    <!-- === REGISTROS GUARDADOS === -->
+    <div class="card">
+      <h2 class="section-title">Registros Guardados</h2>
+      <p style="font-size:0.9rem; color:#aaa;">Lista de días guardados</p>
+
+      <div id="recordsList">
+        <!-- Se llena con JS -->
+      </div>
+
+      <button onclick="showWeeklySummary()" class="btn-primary" style="margin:8px 0;">Resumen Semanal</button>
+      <button onclick="showMonthlySummary()" class="btn-primary">Resumen Mensual</button>
+    </div>
+
+  </div>
+
+  <!-- Botón Flotante -->
+  <div class="fab" onclick="toggleFabMenu()">☰</div>
+
+  <!-- Menú del FAB -->
+  <div class="fab-menu" id="fabMenu">
+    <button onclick="showWeeklySummary()">📅 Resumen Semanal</button>
+    <button onclick="showMonthlySummary()">📆 Resumen Mensual</button>
+    <button class="btn-danger" onclick="clearAllRecords()">🗑️ Limpiar Todos los Registros</button>
+  </div>
+
+  <script>
+    // Cargar configuración
+    function loadConfig() {
+      const config = JSON.parse(localStorage.getItem('vehicleConfig')) || {};
+      document.getElementById('vehicleType').value = config.type || 'gas';
+      document.getElementById('efficiency').value = config.efficiency || 15;
+      document.getElementById('fuelPrice').value = config.fuelPrice || 25;
+      document.getElementById('maintenance').value = config.maintenance || 1;
+      document.getElementById('depreciation').value = config.depreciation || 1;
+      updateFuelLabels();
+    }
+
+    function updateFuelLabels() {
+      const isGas = document.getElementById('vehicleType').value === 'gas';
+      document.getElementById('efficiencyLabel').textContent = isGas ? 'Rendimiento (km/l)' : 'Rendimiento (km/kWh)';
+      document.getElementById('fuelPriceLabel').textContent = isGas ? 'Precio Gasolina ($/l)' : 'Precio Electricidad ($/kWh)';
+    }
+
+    function saveConfig() {
+      const config = {
+        type: document.getElementById('vehicleType').value,
+        efficiency: parseFloat(document.getElementById('efficiency').value),
+        fuelPrice: parseFloat(document.getElementById('fuelPrice').value),
+        maintenance: parseFloat(document.getElementById('maintenance').value),
+        depreciation: parseFloat(document.getElementById('depreciation').value)
+      };
+      localStorage.setItem('vehicleConfig', JSON.stringify(config));
+      alert('✅ Configuración guardada correctamente');
+    }
+
+    // Calcular día
+    function calculateDay() {
+      const km = parseFloat(document.getElementById('km').value) || 0;
+      const hours = parseFloat(document.getElementById('hours').value) || 0;
+      const revenue = parseFloat(document.getElementById('revenue').value) || 0;
+
+      const config = JSON.parse(localStorage.getItem('vehicleConfig')) || {};
+      const fuelCost = (km / config.efficiency) * config.fuelPrice || 0;
+      const maintCost = km * (config.maintenance || 1);
+      const depCost = km * (config.depreciation || 1);
+
+      const totalCost = fuelCost + maintCost + depCost;
+      const netProfit = revenue - totalCost;
+
+      const kmRate = revenue / km;
+      const hourRate = revenue / hours;
+
+      let status = 'red';
+      let statusText = 'No rentable';
+      if (kmRate >= 10 && hourRate >= 200) {
+        status = 'green';
+        statusText = 'Excelente rentabilidad';
+      } else if (kmRate >= 7 || hourRate >= 150) {
+        status = 'yellow';
+        statusText = 'Regular';
+      }
+
+      const resultHTML = `
+        <strong>Ganancia Neta:</strong> $${netProfit.toFixed(2)}<br>
+        <strong>Por km:</strong> $${kmRate.toFixed(2)} <span class="semaphore ${status}"></span><br>
+        <strong>Por hora:</strong> $${hourRate.toFixed(2)}<br>
+        <strong>Estado:</strong> ${statusText}
+      `;
+
+      const resultDiv = document.getElementById('dayResult');
+      resultDiv.innerHTML = resultHTML;
+      resultDiv.style.display = 'block';
+
+      // Guardar registro
+      if (confirm('¿Guardar este registro?')) {
+        const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
+        records.push({
+          date: new Date().toLocaleDateString('es-ES'),
+          km: km,
+          hours: hours,
+          revenue: revenue,
+          cost: totalCost.toFixed(2),
+          profit: netProfit.toFixed(2),
+          status: status
+        });
+        localStorage.setItem('dailyRecords', JSON.stringify(records));
+        loadRecords();
+      }
+    }
+
+    function clearDayForm() {
+      document.getElementById('km').value = '';
+      document.getElementById('hours').value = '';
+      document.getElementById('revenue').value = '';
+      document.getElementById('dayResult').style.display = 'none';
+    }
+
+    // Cargar registros
+    function loadRecords() {
+      const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
+      const container = document.getElementById('recordsList');
+      container.innerHTML = '';
+
+      if (records.length === 0) {
+        container.innerHTML = `<div class="no-records">No hay registros guardados.</div>`;
+        return;
+      }
+
+      records.forEach((rec, index) => {
+        const div = document.createElement('div');
+        div.className = 'record';
+        div.innerHTML = `
+          <strong>${rec.date}</strong><br>
+          ${rec.km} km • ${rec.hours} h<br>
+          Ingreso: $${rec.revenue} | Ganancia: <span style="color:${rec.status==='green'?'#00ff9d':rec.status==='yellow'?'#ffcc00':'#ff3b5c'}">$${rec.profit}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function showWeeklySummary() {
+      alert('📊 Resumen Semanal (funcionalidad completa disponible en versión futura)');
+    }
+
+    function showMonthlySummary() {
+      alert('📊 Resumen Mensual (funcionalidad completa disponible en versión futura)');
+    }
+
+    function clearAllRecords() {
+      if (confirm('¿Estás seguro de borrar TODOS los registros?')) {
+        localStorage.removeItem('dailyRecords');
+        loadRecords();
+      }
+    }
+
+    function toggleFabMenu() {
+      const menu = document.getElementById('fabMenu');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Inicialización
+    document.getElementById('vehicleType').addEventListener('change', updateFuelLabels);
+    window.onload = () => {
+      loadConfig();
+      loadRecords();
+    };
+  </script>
+</body>
+</html>
