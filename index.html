@@ -303,59 +303,67 @@
     }
 
     // Calcular día
-    function calculateDay() {
-      const km = parseFloat(document.getElementById('km').value) || 0;
-      const hours = parseFloat(document.getElementById('hours').value) || 0;
-      const revenue = parseFloat(document.getElementById('revenue').value) || 0;
+function calculateDay() {
+  const km = parseFloat(document.getElementById('km').value) || 0;
+  const hours = parseFloat(document.getElementById('hours').value) || 0;
+  const revenue = parseFloat(document.getElementById('revenue').value) || 0;
 
-      const config = JSON.parse(localStorage.getItem('vehicleConfig')) || {};
-      const fuelCost = (km / config.efficiency) * config.fuelPrice || 0;
-      const maintCost = km * (config.maintenance || 1);
-      const depCost = km * (config.depreciation || 1);
+  const config = JSON.parse(localStorage.getItem('vehicleConfig')) || {};
+  const isGas = config.type === 'gas';
 
-      const totalCost = fuelCost + maintCost + depCost;
-      const netProfit = revenue - totalCost;
+  // Cálculos detallados
+  const fuelCost = (km / (config.efficiency || 15)) * (config.fuelPrice || 25);
+  const maintCost = km * (config.maintenance || 1);
+  const depCost = km * (config.depreciation || 1);
 
-      const kmRate = revenue / km;
-      const hourRate = revenue / hours;
+  const totalCost = fuelCost + maintCost + depCost;
+  const netProfit = revenue - totalCost;
 
-      let status = 'red';
-      let statusText = 'No rentable';
-      if (kmRate >= 10 && hourRate >= 200) {
-        status = 'green';
-        statusText = 'Excelente rentabilidad';
-      } else if (kmRate >= 7 || hourRate >= 150) {
-        status = 'yellow';
-        statusText = 'Regular';
-      }
+  const kmRate = km > 0 ? revenue / km : 0;
+  const hourRate = hours > 0 ? revenue / hours : 0;
 
-      const resultHTML = `
-        <strong>Ganancia Neta:</strong> $${netProfit.toFixed(2)}<br>
-        <strong>Por km:</strong> $${kmRate.toFixed(2)} <span class="semaphore ${status}"></span><br>
-        <strong>Por hora:</strong> $${hourRate.toFixed(2)}<br>
-        <strong>Estado:</strong> ${statusText}
-      `;
+  // Determinar semáforo
+  let status = 'red';
+  let statusText = 'No rentable';
+  if (kmRate >= 10 && hourRate >= 200) {
+    status = 'green';
+    statusText = 'Excelente rentabilidad';
+  } else if (kmRate >= 7 || hourRate >= 150) {
+    status = 'yellow';
+    statusText = 'Rentabilidad regular';
+  }
 
-      const resultDiv = document.getElementById('dayResult');
-      resultDiv.innerHTML = resultHTML;
-      resultDiv.style.display = 'block';
+  // HTML mejorado con desglose completo
+  const resultHTML = `
+    <h3 style="margin-bottom:12px; color:var(--primary);">Resultado del Día</h3>
+    
+    <strong>Desglose de Costos:</strong><br>
+    • ${isGas ? 'Gasolina' : 'Electricidad'}: <strong>$${fuelCost.toFixed(2)}</strong><br>
+    • Mantenimiento: <strong>$${maintCost.toFixed(2)}</strong><br>
+    • Depreciación: <strong>$${depCost.toFixed(2)}</strong><br>
+    <hr style="margin:8px 0; border-color:#333;">
+    <strong>Total Costos:</strong> $${totalCost.toFixed(2)}<br>
+    <strong style="color:#00ff9d;">Ganancia Neta:</strong> <strong>$${netProfit.toFixed(2)}</strong><br><br>
 
-      // Guardar registro
-      if (confirm('¿Guardar este registro?')) {
-        const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
-        records.push({
-          date: new Date().toLocaleDateString('es-ES'),
-          km: km,
-          hours: hours,
-          revenue: revenue,
-          cost: totalCost.toFixed(2),
-          profit: netProfit.toFixed(2),
-          status: status
-        });
-        localStorage.setItem('dailyRecords', JSON.stringify(records));
-        loadRecords();
-      }
-    }
+    <strong>Rentabilidad:</strong><br>
+    • Por km: <strong>$${kmRate.toFixed(2)}</strong> 
+    <span class="semaphore ${status}"></span><br>
+    • Por hora: <strong>$${hourRate.toFixed(2)}</strong><br>
+    <strong>Estado:</strong> ${statusText}
+  `;
+
+  const resultDiv = document.getElementById('dayResult');
+  resultDiv.innerHTML = resultHTML;
+  resultDiv.style.display = 'block';
+
+  // Botón para guardar
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = '💾 Guardar Registro';
+  saveBtn.className = 'btn-success';
+  saveBtn.style.marginTop = '12px';
+  saveBtn.onclick = () => saveRecord(km, hours, revenue, totalCost, netProfit, status);
+  resultDiv.appendChild(saveBtn);
+}
 
     function clearDayForm() {
       document.getElementById('km').value = '';
@@ -406,6 +414,28 @@
       const menu = document.getElementById('fabMenu');
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
+
+    function saveRecord(km, hours, revenue, totalCost, netProfit, status) {
+  const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
+  
+  records.push({
+    date: new Date().toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' }),
+    km: km,
+    hours: hours,
+    revenue: revenue,
+    fuelCost: (km / (JSON.parse(localStorage.getItem('vehicleConfig')).efficiency || 15) * 
+               JSON.parse(localStorage.getItem('vehicleConfig')).fuelPrice || 0).toFixed(2),
+    maintCost: (km * (JSON.parse(localStorage.getItem('vehicleConfig')).maintenance || 1)).toFixed(2),
+    depCost: (km * (JSON.parse(localStorage.getItem('vehicleConfig')).depreciation || 1)).toFixed(2),
+    totalCost: parseFloat(totalCost).toFixed(2),
+    profit: parseFloat(netProfit).toFixed(2),
+    status: status
+  });
+
+  localStorage.setItem('dailyRecords', JSON.stringify(records));
+  loadRecords();
+  alert('✅ Registro guardado correctamente');
+}
 
     // Inicialización
     document.getElementById('vehicleType').addEventListener('change', updateFuelLabels);
