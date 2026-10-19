@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Registro y Gestión de Ganancias</title>
   <style>
     :root {
@@ -13,32 +13,44 @@
       --danger: #ff3b5c;
       --bg: #0f0f12;
       --card: #1a1a22;
+      --input-bg: #25252e;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: #e0e0e0;
       min-height: 100vh;
-      padding-bottom: 80px;
+      padding-bottom: 90px;
     }
 
     header {
       background: linear-gradient(135deg, #1a1a22, #2a2a35);
-      padding: 1.5rem;
+      padding: 1.2rem 1rem;
       text-align: center;
       border-bottom: 3px solid var(--primary);
+      position: relative;
     }
 
     h1 {
-      font-size: 1.8rem;
+      font-size: 1.45rem;
       color: var(--primary);
+      font-weight: 700;
+    }
+
+    .btn-config {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 6px;
     }
 
     .container {
@@ -50,29 +62,37 @@
     .card {
       background: var(--card);
       border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.1);
+      padding: 1.4rem;
+      margin-bottom: 1.3rem;
+      box-shadow: 0 4px 18px rgba(0, 240, 255, 0.08);
     }
 
     .section-title {
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      margin-bottom: 0.9rem;
       color: var(--primary);
+      font-weight: 600;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: #bbb;
     }
 
     input, select, button {
       width: 100%;
-      padding: 12px 16px;
+      padding: 13px 15px;
       border-radius: 12px;
       border: none;
-      background: #25252e;
+      background: var(--input-bg);
       color: white;
       font-size: 1rem;
       margin-bottom: 12px;
     }
 
-    input:focus {
+    input:focus, select:focus {
       outline: 2px solid var(--primary);
     }
 
@@ -80,200 +100,293 @@
       display: flex;
       gap: 12px;
     }
-
-    .row > div {
-      flex: 1;
-    }
+    .row > div { flex: 1; }
 
     button {
-      font-weight: bold;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.25s ease;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #00b8c9);
-      color: black;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #000;
     }
-
     .btn-success {
       background: linear-gradient(135deg, #00ff9d, #00cc7a);
-      color: black;
+      color: #000;
     }
-
     .btn-danger {
       background: linear-gradient(135deg, var(--danger), #cc0033);
+      color: white;
     }
-
     .btn-secondary {
       background: #33333d;
+      color: #ddd;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
     }
 
+    /* FAB */
     .fab {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      width: 64px;
-      height: 64px;
+      width: 60px;
+      height: 60px;
       background: linear-gradient(135deg, var(--primary), #00aaff);
-      color: black;
+      color: #000;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
-      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.4);
+      font-size: 1.7rem;
+      box-shadow: 0 6px 22px rgba(0, 240, 255, 0.4);
       z-index: 1000;
       cursor: pointer;
+      border: none;
     }
 
     .fab-menu {
       position: fixed;
-      bottom: 100px;
+      bottom: 95px;
       right: 24px;
       background: var(--card);
       border-radius: 16px;
-      padding: 12px 0;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      padding: 8px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.55);
       display: none;
       flex-direction: column;
       z-index: 999;
-      min-width: 220px;
+      min-width: 230px;
+      overflow: hidden;
     }
-
     .fab-menu button {
       text-align: left;
-      padding: 14px 20px;
+      padding: 14px 18px;
       background: transparent;
       margin: 0;
       border-radius: 0;
+      color: #e0e0e0;
+      font-size: 0.95rem;
     }
+    .fab-menu button:hover { background: #2a2a35; }
 
-    .fab-menu button:hover {
-      background: #2a2a35;
-    }
-
+    /* Semaphore */
     .semaphore {
-      width: 28px;
-      height: 28px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       display: inline-block;
       vertical-align: middle;
+      margin-left: 6px;
     }
-
     .red { background: var(--danger); }
     .yellow { background: var(--warning); }
     .green { background: var(--success); }
 
+    /* Records */
     .record {
       background: #25252e;
-      padding: 12px;
+      padding: 14px;
       border-radius: 12px;
       margin-bottom: 10px;
-      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
     }
-
+    .record-info { flex: 1; }
+    .record-info strong { color: #fff; }
     .no-records {
       text-align: center;
-      color: #888;
+      color: #777;
       font-style: italic;
-      padding: 2rem;
+      padding: 2.2rem 1rem;
+    }
+
+    /* Screens */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* Result box */
+    #dayResult {
+      margin-top: 1rem;
+      padding: 14px;
+      border-radius: 12px;
+      background: #1f1f28;
+      display: none;
+      line-height: 1.55;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #2a2a35;
+      font-size: 0.95rem;
+    }
+    .detail-row:last-child { border-bottom: none; }
+
+    .summary-box {
+      background: #1f1f28;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    .back-btn {
+      margin-bottom: 1rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Registro y Gestión de Ganancias</h1>
-  </header>
 
-  <div class="container">
+  <!-- ========== PANTALLA PRINCIPAL ========== -->
+  <div id="mainScreen" class="screen active">
+    <header>
+      <h1>Registro y Gestión de Ganancias</h1>
+      <button class="btn-config" onclick="showScreen('configScreen')" title="Configuración del vehículo">⚙️</button>
+    </header>
 
-    <!-- === CONFIGURACIÓN DEL VEHÍCULO === -->
-    <div class="card">
-      <h2 class="section-title">Configuración del Vehículo</h2>
-      <p style="font-size:0.9rem; color:#aaa; margin-bottom:1rem;">Los datos se guardan en tu navegador</p>
+    <div class="container">
+      <!-- REGISTRO DEL DÍA -->
+      <div class="card">
+        <h2 class="section-title">Registro del Día</h2>
+        <p style="font-size:0.88rem; color:#999; margin-bottom:1rem;">
+          Umbrales mínimos: <strong>$10 / km</strong> y <strong>$200 / hora</strong>
+        </p>
 
-      <label>Tipo de Vehículo</label>
-      <select id="vehicleType">
-        <option value="gas">Gasolina</option>
-        <option value="electric">Eléctrico</option>
-      </select>
-
-      <div class="row">
-        <div>
-          <label id="efficiencyLabel">Rendimiento (km/l)</label>
-          <input type="number" id="efficiency" value="15" step="0.1">
+        <div class="row">
+          <div>
+            <label>Kilómetros recorridos hoy (km)</label>
+            <input type="number" id="km" placeholder="Ej. 170" step="0.1">
+          </div>
+          <div>
+            <label>Tiempo (horas)</label>
+            <input type="number" id="hours" placeholder="Ej. 11" step="0.5">
+          </div>
         </div>
-        <div>
-          <label id="fuelPriceLabel">Precio Combustible ($/l)</label>
-          <input type="number" id="fuelPrice" value="25" step="0.01">
+
+        <label>Tarifa total del día ($)</label>
+        <input type="number" id="revenue" placeholder="Ej. 1700" step="0.01">
+
+        <div class="row" style="margin-top:8px;">
+          <button class="btn-primary" onclick="calculateDay()">Calcular</button>
+          <button class="btn-secondary" onclick="clearDayForm()">Limpiar</button>
         </div>
+
+        <div id="dayResult"></div>
       </div>
 
-      <label>Mantenimiento ($/km)</label>
-      <input type="number" id="maintenance" value="1" step="0.01">
+      <!-- REGISTROS GUARDADOS -->
+      <div class="card">
+        <h2 class="section-title">Registros Guardados</h2>
+        <p style="font-size:0.88rem; color:#999; margin-bottom:1rem;">Lista de días guardados</p>
 
-      <label>Depreciación del Vehículo ($/km)</label>
-      <input type="number" id="depreciation" value="1" step="0.01">
+        <div id="recordsList"></div>
 
-      <button class="btn-primary" onclick="saveConfig()">Guardar Configuración</button>
-      <p style="font-size:0.85rem; text-align:center; margin-top:8px; color:#00f0ff;">✅ Configuración guardada</p>
+        <button class="btn-primary" style="margin-top:10px;" onclick="showWeeklySummary()">📅 Resumen Semanal</button>
+        <button class="btn-primary" onclick="showMonthlySummary()">📆 Resumen Mensual</button>
+      </div>
     </div>
-
-    <!-- === REGISTRO DEL DÍA === -->
-    <div class="card">
-      <h2 class="section-title">Registro del Día</h2>
-      <p style="font-size:0.9rem; color:#aaa;">Umbrales mínimos: <strong>$10/km</strong> y <strong>$200/hora</strong></p>
-
-      <div class="row">
-        <div>
-          <label>Kilómetros recorridos hoy (km)</label>
-          <input type="number" id="km" placeholder="Ej. 170" value="170">
-        </div>
-        <div>
-          <label>Tiempo (horas)</label>
-          <input type="number" id="hours" placeholder="Ej. 11" value="11" step="0.5">
-        </div>
-      </div>
-
-      <label>Tarifa total del día ($)</label>
-      <input type="number" id="revenue" placeholder="Ej. 1700" value="1700">
-
-      <div class="row" style="margin-top:16px;">
-        <button class="btn-primary" onclick="calculateDay()">Calcular</button>
-        <button class="btn-secondary" onclick="clearDayForm()">Limpiar</button>
-      </div>
-
-      <div id="dayResult" style="margin-top:1rem; padding:12px; border-radius:12px; background:#1f1f28; display:none;"></div>
-    </div>
-
-    <!-- === REGISTROS GUARDADOS === -->
-    <div class="card">
-      <h2 class="section-title">Registros Guardados</h2>
-      <p style="font-size:0.9rem; color:#aaa;">Lista de días guardados</p>
-
-      <div id="recordsList">
-        <!-- Se llena con JS -->
-      </div>
-
-      <button onclick="showWeeklySummary()" class="btn-primary" style="margin:8px 0;">Resumen Semanal</button>
-      <button onclick="showMonthlySummary()" class="btn-primary">Resumen Mensual</button>
-    </div>
-
   </div>
 
-  <!-- Botón Flotante -->
-  <div class="fab" onclick="toggleFabMenu()">☰</div>
+  <!-- ========== PANTALLA CONFIGURACIÓN ========== -->
+  <div id="configScreen" class="screen">
+    <header>
+      <h1>Configuración del Vehículo</h1>
+    </header>
+    <div class="container">
+      <div class="card">
+        <button class="btn-outline back-btn" onclick="showScreen('mainScreen')">← Regresar</button>
 
-  <!-- Menú del FAB -->
+        <p style="font-size:0.88rem; color:#999; margin-bottom:1.2rem;">
+          Los datos se guardan en tu navegador (localStorage)
+        </p>
+
+        <label>Tipo de Vehículo</label>
+        <select id="vehicleType" onchange="updateFuelLabels()">
+          <option value="gas">Gasolina</option>
+          <option value="electric">Eléctrico</option>
+        </select>
+
+        <div class="row">
+          <div>
+            <label id="efficiencyLabel">Rendimiento (km/l)</label>
+            <input type="number" id="efficiency" value="15" step="0.1">
+          </div>
+          <div>
+            <label id="fuelPriceLabel">Precio Gasolina ($/l)</label>
+            <input type="number" id="fuelPrice" value="25" step="0.01">
+          </div>
+        </div>
+
+        <label>Mantenimiento ($/km)</label>
+        <input type="number" id="maintenance" value="1" step="0.01">
+
+        <label>Depreciación del Vehículo ($/km)</label>
+        <input type="number" id="depreciation" value="1" step="0.01">
+
+        <button class="btn-primary" onclick="saveConfig()">Guardar Configuración</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PANTALLA DETALLE DE REGISTRO ========== -->
+  <div id="detailScreen" class="screen">
+    <header>
+      <h1>Detalle del Registro</h1>
+    </header>
+    <div class="container">
+      <div class="card">
+        <button class="btn-outline back-btn" onclick="showScreen('mainScreen')">← Regresar</button>
+        <div id="detailContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PANTALLA RESUMEN ========== -->
+  <div id="summaryScreen" class="screen">
+    <header>
+      <h1 id="summaryTitle">Resumen</h1>
+    </header>
+    <div class="container">
+      <div class="card">
+        <button class="btn-outline back-btn" onclick="showScreen('mainScreen')">← Regresar</button>
+        <div id="summaryContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" onclick="toggleFabMenu()">☰</button>
   <div class="fab-menu" id="fabMenu">
-    <button onclick="showWeeklySummary()">📅 Resumen Semanal</button>
-    <button onclick="showMonthlySummary()">📆 Resumen Mensual</button>
-    <button class="btn-danger" onclick="clearAllRecords()">🗑️ Limpiar Todos los Registros</button>
+    <button onclick="showWeeklySummary(); toggleFabMenu();">📅 Resumen Semanal</button>
+    <button onclick="showMonthlySummary(); toggleFabMenu();">📆 Resumen Mensual</button>
+    <button onclick="showScreen('configScreen'); toggleFabMenu();">⚙️ Configuración</button>
+    <button class="btn-danger" onclick="clearAllRecords(); toggleFabMenu();">🗑️ Limpiar Todos</button>
   </div>
 
   <script>
-    // Cargar configuración
+    // ========== NAVEGACIÓN ==========
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.getElementById('fabMenu').style.display = 'none';
+      window.scrollTo(0, 0);
+    }
+
+    function toggleFabMenu() {
+      const menu = document.getElementById('fabMenu');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // ========== CONFIGURACIÓN ==========
     function loadConfig() {
       const config = JSON.parse(localStorage.getItem('vehicleConfig')) || {};
       document.getElementById('vehicleType').value = config.type || 'gas';
@@ -293,77 +406,70 @@
     function saveConfig() {
       const config = {
         type: document.getElementById('vehicleType').value,
-        efficiency: parseFloat(document.getElementById('efficiency').value),
-        fuelPrice: parseFloat(document.getElementById('fuelPrice').value),
-        maintenance: parseFloat(document.getElementById('maintenance').value),
-        depreciation: parseFloat(document.getElementById('depreciation').value)
+        efficiency: parseFloat(document.getElementById('efficiency').value) || 15,
+        fuelPrice: parseFloat(document.getElementById('fuelPrice').value) || 25,
+        maintenance: parseFloat(document.getElementById('maintenance').value) || 1,
+        depreciation: parseFloat(document.getElementById('depreciation').value) || 1
       };
       localStorage.setItem('vehicleConfig', JSON.stringify(config));
       alert('✅ Configuración guardada correctamente');
+      showScreen('mainScreen');
     }
 
-    // Calcular día
-function calculateDay() {
-  const km = parseFloat(document.getElementById('km').value) || 0;
-  const hours = parseFloat(document.getElementById('hours').value) || 0;
-  const revenue = parseFloat(document.getElementById('revenue').value) || 0;
+    // ========== CÁLCULO DEL DÍA ==========
+    function calculateDay() {
+      const km = parseFloat(document.getElementById('km').value) || 0;
+      const hours = parseFloat(document.getElementById('hours').value) || 0;
+      const revenue = parseFloat(document.getElementById('revenue').value) || 0;
 
-  const config = JSON.parse(localStorage.getItem('vehicleConfig')) || {};
-  const isGas = config.type === 'gas';
+      if (km <= 0 || hours <= 0 || revenue <= 0) {
+        alert('Por favor ingresa kilómetros, horas y tarifa válidos.');
+        return;
+      }
 
-  // Cálculos detallados
-  const fuelCost = (km / (config.efficiency || 15)) * (config.fuelPrice || 25);
-  const maintCost = km * (config.maintenance || 1);
-  const depCost = km * (config.depreciation || 1);
+      const config = JSON.parse(localStorage.getItem('vehicleConfig')) || {
+        type: 'gas', efficiency: 15, fuelPrice: 25, maintenance: 1, depreciation: 1
+      };
 
-  const totalCost = fuelCost + maintCost + depCost;
-  const netProfit = revenue - totalCost;
+      const isGas = config.type === 'gas';
+      const fuelCost = (km / config.efficiency) * config.fuelPrice;
+      const maintCost = km * config.maintenance;
+      const depCost = km * config.depreciation;
+      const totalCost = fuelCost + maintCost + depCost;
+      const netProfit = revenue - totalCost;
+      const kmRate = revenue / km;
+      const hourRate = revenue / hours;
 
-  const kmRate = km > 0 ? revenue / km : 0;
-  const hourRate = hours > 0 ? revenue / hours : 0;
+      let status = 'red';
+      let statusText = 'No rentable';
+      if (kmRate >= 10 && hourRate >= 200) {
+        status = 'green';
+        statusText = 'Excelente rentabilidad';
+      } else if (kmRate >= 7 || hourRate >= 150) {
+        status = 'yellow';
+        statusText = 'Rentabilidad regular';
+      }
 
-  // Determinar semáforo
-  let status = 'red';
-  let statusText = 'No rentable';
-  if (kmRate >= 10 && hourRate >= 200) {
-    status = 'green';
-    statusText = 'Excelente rentabilidad';
-  } else if (kmRate >= 7 || hourRate >= 150) {
-    status = 'yellow';
-    statusText = 'Rentabilidad regular';
-  }
-
-  // HTML mejorado con desglose completo
-  const resultHTML = `
-    <h3 style="margin-bottom:12px; color:var(--primary);">Resultado del Día</h3>
-    
-    <strong>Desglose de Costos:</strong><br>
-    • ${isGas ? 'Gasolina' : 'Electricidad'}: <strong>$${fuelCost.toFixed(2)}</strong><br>
-    • Mantenimiento: <strong>$${maintCost.toFixed(2)}</strong><br>
-    • Depreciación: <strong>$${depCost.toFixed(2)}</strong><br>
-    <hr style="margin:8px 0; border-color:#333;">
-    <strong>Total Costos:</strong> $${totalCost.toFixed(2)}<br>
-    <strong style="color:#00ff9d;">Ganancia Neta:</strong> <strong>$${netProfit.toFixed(2)}</strong><br><br>
-
-    <strong>Rentabilidad:</strong><br>
-    • Por km: <strong>$${kmRate.toFixed(2)}</strong> 
-    <span class="semaphore ${status}"></span><br>
-    • Por hora: <strong>$${hourRate.toFixed(2)}</strong><br>
-    <strong>Estado:</strong> ${statusText}
-  `;
-
-  const resultDiv = document.getElementById('dayResult');
-  resultDiv.innerHTML = resultHTML;
-  resultDiv.style.display = 'block';
-
-  // Botón para guardar
-  const saveBtn = document.createElement('button');
-  saveBtn.textContent = '💾 Guardar Registro';
-  saveBtn.className = 'btn-success';
-  saveBtn.style.marginTop = '12px';
-  saveBtn.onclick = () => saveRecord(km, hours, revenue, totalCost, netProfit, status);
-  resultDiv.appendChild(saveBtn);
-}
+      const resultDiv = document.getElementById('dayResult');
+      resultDiv.innerHTML = `
+        <h3 style="color:var(--primary); margin-bottom:10px;">Resultado del Día</h3>
+        <strong>Desglose de Costos:</strong><br>
+        • ${isGas ? 'Gasolina' : 'Electricidad'}: <strong>$${fuelCost.toFixed(2)}</strong><br>
+        • Mantenimiento: <strong>$${maintCost.toFixed(2)}</strong><br>
+        • Depreciación: <strong>$${depCost.toFixed(2)}</strong><br>
+        <hr style="margin:10px 0; border-color:#333;">
+        <strong>Total Costos:</strong> $${totalCost.toFixed(2)}<br>
+        <strong style="color:var(--success);">Ganancia Neta:</strong> <strong>$${netProfit.toFixed(2)}</strong><br><br>
+        <strong>Rentabilidad:</strong><br>
+        • Por km: <strong>$${kmRate.toFixed(2)}</strong> <span class="semaphore ${status}"></span><br>
+        • Por hora: <strong>$${hourRate.toFixed(2)}</strong><br>
+        <strong>Estado:</strong> ${statusText}
+        <button class="btn-success" style="margin-top:14px;" onclick="saveRecord(${km}, ${hours}, ${revenue}, ${totalCost}, ${netProfit}, '${status}')">
+          💾 Guardar Registro
+        </button>
+      `;
+      resultDiv.style.display = 'block';
+    }
 
     function clearDayForm() {
       document.getElementById('km').value = '';
@@ -372,73 +478,191 @@ function calculateDay() {
       document.getElementById('dayResult').style.display = 'none';
     }
 
-    // Cargar registros
+    // ========== GUARDAR / CARGAR REGISTROS ==========
+    function saveRecord(km, hours, revenue, totalCost, netProfit, status) {
+      const config = JSON.parse(localStorage.getItem('vehicleConfig')) || {
+        efficiency: 15, fuelPrice: 25, maintenance: 1, depreciation: 1
+      };
+
+      const fuelCost = (km / config.efficiency) * config.fuelPrice;
+      const maintCost = km * config.maintenance;
+      const depCost = km * config.depreciation;
+
+      const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
+      records.unshift({
+        id: Date.now(),
+        date: new Date().toLocaleDateString('es-ES', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }),
+        timestamp: Date.now(),
+        km: km,
+        hours: hours,
+        revenue: parseFloat(revenue.toFixed(2)),
+        fuelCost: parseFloat(fuelCost.toFixed(2)),
+        maintCost: parseFloat(maintCost.toFixed(2)),
+        depCost: parseFloat(depCost.toFixed(2)),
+        totalCost: parseFloat(totalCost.toFixed(2)),
+        profit: parseFloat(netProfit.toFixed(2)),
+        status: status
+      });
+
+      localStorage.setItem('dailyRecords', JSON.stringify(records));
+      loadRecords();
+      clearDayForm();
+      alert('✅ Registro guardado correctamente');
+    }
+
     function loadRecords() {
       const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
       const container = document.getElementById('recordsList');
       container.innerHTML = '';
 
       if (records.length === 0) {
-        container.innerHTML = `<div class="no-records">No hay registros guardados.</div>`;
+        container.innerHTML = '<div class="no-records">No hay registros guardados.</div>';
         return;
       }
 
       records.forEach((rec, index) => {
+        const color = rec.status === 'green' ? '#00ff9d' : rec.status === 'yellow' ? '#ffcc00' : '#ff3b5c';
         const div = document.createElement('div');
         div.className = 'record';
         div.innerHTML = `
-          <strong>${rec.date}</strong><br>
-          ${rec.km} km • ${rec.hours} h<br>
-          Ingreso: $${rec.revenue} | Ganancia: <span style="color:${rec.status==='green'?'#00ff9d':rec.status==='yellow'?'#ffcc00':'#ff3b5c'}">$${rec.profit}</span>
+          <div class="record-info">
+            <strong>${rec.date}</strong><br>
+            ${rec.km} km • ${rec.hours} h<br>
+            Ingreso: $${rec.revenue} | 
+            <span style="color:${color}">Ganancia: $${rec.profit}</span>
+          </div>
+          <button class="btn-outline" style="width:auto; padding:8px 12px; margin:0; font-size:0.85rem;" 
+                  onclick="showDetail(${index})">Ver detalle</button>
         `;
         container.appendChild(div);
       });
     }
 
-    function showWeeklySummary() {
-      alert('📊 Resumen Semanal (funcionalidad completa disponible en versión futura)');
+    function showDetail(index) {
+      const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
+      const rec = records[index];
+      if (!rec) return;
+
+      const color = rec.status === 'green' ? '#00ff9d' : rec.status === 'yellow' ? '#ffcc00' : '#ff3b5c';
+      const isGas = (JSON.parse(localStorage.getItem('vehicleConfig')) || {}).type !== 'electric';
+
+      document.getElementById('detailContent').innerHTML = `
+        <h3 style="color:var(--primary); margin-bottom:14px;">${rec.date}</h3>
+        
+        <div class="detail-row"><span>Kilómetros</span><span>${rec.km} km</span></div>
+        <div class="detail-row"><span>Horas trabajadas</span><span>${rec.hours} h</span></div>
+        <div class="detail-row"><span>Ingreso total</span><span>$${rec.revenue}</span></div>
+        
+        <div style="margin:16px 0 8px; color:var(--primary); font-weight:600;">Desglose de Costos</div>
+        <div class="detail-row"><span>${isGas ? 'Gasolina' : 'Electricidad'}</span><span>$${rec.fuelCost}</span></div>
+        <div class="detail-row"><span>Mantenimiento</span><span>$${rec.maintCost}</span></div>
+        <div class="detail-row"><span>Depreciación</span><span>$${rec.depCost}</span></div>
+        <div class="detail-row"><span><strong>Total Costos</strong></span><span><strong>$${rec.totalCost}</strong></span></div>
+        
+        <div class="detail-row" style="margin-top:12px; font-size:1.1rem;">
+          <span style="color:var(--success);"><strong>Ganancia Neta</strong></span>
+          <span style="color:${color};"><strong>$${rec.profit}</strong></span>
+        </div>
+        
+        <div class="detail-row">
+          <span>Estado</span>
+          <span><span class="semaphore ${rec.status}"></span> ${rec.status === 'green' ? 'Excelente' : rec.status === 'yellow' ? 'Regular' : 'No rentable'}</span>
+        </div>
+
+        <button class="btn-danger" style="margin-top:20px;" onclick="deleteRecord(${index})">🗑️ Eliminar este registro</button>
+      `;
+      showScreen('detailScreen');
     }
 
-    function showMonthlySummary() {
-      alert('📊 Resumen Mensual (funcionalidad completa disponible en versión futura)');
+    function deleteRecord(index) {
+      if (!confirm('¿Eliminar este registro?')) return;
+      const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
+      records.splice(index, 1);
+      localStorage.setItem('dailyRecords', JSON.stringify(records));
+      loadRecords();
+      showScreen('mainScreen');
     }
 
     function clearAllRecords() {
-      if (confirm('¿Estás seguro de borrar TODOS los registros?')) {
-        localStorage.removeItem('dailyRecords');
-        loadRecords();
+      if (!confirm('¿Estás seguro de borrar TODOS los registros?')) return;
+      localStorage.removeItem('dailyRecords');
+      loadRecords();
+    }
+
+    // ========== RESÚMENES ==========
+    function getRecordsInRange(days) {
+      const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
+      const now = Date.now();
+      const cutoff = now - (days * 24 * 60 * 60 * 1000);
+      return records.filter(r => r.timestamp >= cutoff);
+    }
+
+    function buildSummary(records, title) {
+      if (records.length === 0) {
+        return `<div class="no-records">No hay registros en este período.</div>`;
       }
+
+      let totalKm = 0, totalHours = 0, totalRevenue = 0, totalCost = 0, totalProfit = 0;
+      records.forEach(r => {
+        totalKm += r.km;
+        totalHours += r.hours;
+        totalRevenue += r.revenue;
+        totalCost += r.totalCost;
+        totalProfit += r.profit;
+      });
+
+      const avgKmRate = totalKm > 0 ? totalRevenue / totalKm : 0;
+      const avgHourRate = totalHours > 0 ? totalRevenue / totalHours : 0;
+
+      let status = 'red';
+      let statusText = 'No rentable';
+      if (avgKmRate >= 10 && avgHourRate >= 200) {
+        status = 'green'; statusText = 'Excelente rentabilidad';
+      } else if (avgKmRate >= 7 || avgHourRate >= 150) {
+        status = 'yellow'; statusText = 'Rentabilidad regular';
+      }
+
+      let listHtml = records.map(r => {
+        const c = r.status === 'green' ? '#00ff9d' : r.status === 'yellow' ? '#ffcc00' : '#ff3b5c';
+        return `<div style="padding:6px 0; border-bottom:1px solid #2a2a35; font-size:0.9rem;">
+          ${r.date}: ${r.km} km • $${r.revenue} → <span style="color:${c}">$${r.profit}</span>
+        </div>`;
+      }).join('');
+
+      return `
+        <div class="summary-box">
+          <strong>Días registrados:</strong> ${records.length}<br>
+          <strong>Total km:</strong> ${totalKm.toFixed(1)} km<br>
+          <strong>Total horas:</strong> ${totalHours.toFixed(1)} h<br>
+          <strong>Ingresos totales:</strong> $${totalRevenue.toFixed(2)}<br>
+          <strong>Costos totales:</strong> $${totalCost.toFixed(2)}<br>
+          <strong style="color:var(--success);">Ganancia neta:</strong> $${totalProfit.toFixed(2)}<br><br>
+          <strong>Promedio por km:</strong> $${avgKmRate.toFixed(2)} <span class="semaphore ${status}"></span><br>
+          <strong>Promedio por hora:</strong> $${avgHourRate.toFixed(2)}<br>
+          <strong>Estado general:</strong> ${statusText}
+        </div>
+        <div style="margin-top:16px;">
+          <strong style="color:var(--primary);">Detalle de días:</strong>
+          ${listHtml}
+        </div>
+      `;
     }
 
-    function toggleFabMenu() {
-      const menu = document.getElementById('fabMenu');
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    function showWeeklySummary() {
+      const records = getRecordsInRange(7);
+      document.getElementById('summaryTitle').textContent = 'Resumen Semanal';
+      document.getElementById('summaryContent').innerHTML = buildSummary(records, 'Semanal');
+      showScreen('summaryScreen');
     }
 
-    function saveRecord(km, hours, revenue, totalCost, netProfit, status) {
-  const records = JSON.parse(localStorage.getItem('dailyRecords')) || [];
-  
-  records.push({
-    date: new Date().toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' }),
-    km: km,
-    hours: hours,
-    revenue: revenue,
-    fuelCost: (km / (JSON.parse(localStorage.getItem('vehicleConfig')).efficiency || 15) * 
-               JSON.parse(localStorage.getItem('vehicleConfig')).fuelPrice || 0).toFixed(2),
-    maintCost: (km * (JSON.parse(localStorage.getItem('vehicleConfig')).maintenance || 1)).toFixed(2),
-    depCost: (km * (JSON.parse(localStorage.getItem('vehicleConfig')).depreciation || 1)).toFixed(2),
-    totalCost: parseFloat(totalCost).toFixed(2),
-    profit: parseFloat(netProfit).toFixed(2),
-    status: status
-  });
+    function showMonthlySummary() {
+      const records = getRecordsInRange(30);
+      document.getElementById('summaryTitle').textContent = 'Resumen Mensual';
+      document.getElementById('summaryContent').innerHTML = buildSummary(records, 'Mensual');
+      showScreen('summaryScreen');
+    }
 
-  localStorage.setItem('dailyRecords', JSON.stringify(records));
-  loadRecords();
-  alert('✅ Registro guardado correctamente');
-}
-
-    // Inicialización
-    document.getElementById('vehicleType').addEventListener('change', updateFuelLabels);
+    // ========== INICIALIZACIÓN ==========
     window.onload = () => {
       loadConfig();
       loadRecords();
